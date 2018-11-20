@@ -9,6 +9,10 @@ import 'element-ui/lib/theme-chalk/index.css';
 import 'font-awesome/css/font-awesome.min.css';
 import store from './store/store';
 import axios from 'axios';
+// import VueAxios from 'vue-axios';
+//
+// Vue.use(VueAxios, axios)
+// Axios.defaults.baseURL = '/api'
 
 Vue.prototype.$axios=axios;
 Vue.use(ElementUI);

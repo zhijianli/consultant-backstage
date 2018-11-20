@@ -16,6 +16,7 @@
 </template>
 
 <script>
+
 export default {
     data() {
         return {
@@ -41,12 +42,16 @@ export default {
     methods:{
         increment(){
 
-                this.$store.commit("getConsultantList").then(() => {
-                  console.log("====================")
-          				// console.log(this.$store.state.consultantList+"===========");
-          			}).catch((error) => {
-          				this.$toast("似乎网络出现了一点问题~~")
-          			})
+          return this.$axios.post("/api/consultant/getAllMessageByCondition").then((response) => {
+            if (response.status === 200) {
+              return response.data
+            } else {
+              return {msg: "抱歉，服务器错误"}
+            }
+          }).catch((error) => {
+            return Promise.reject({msg: error.message})
+          })
+
 
           this.$store.commit('increment')
         },

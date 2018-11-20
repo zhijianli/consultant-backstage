@@ -14,11 +14,18 @@ module.exports = {
         "/api": {
             target: "http://localhost:8088",
             changeOrigin:true, //是否跨域
-            // secure: false
+            // secure: false // 如果是https接口，需要配置这个参数
             pathRewrite: {
                '^/api': '/'
             }
         }
+        // '/api/**': {
+        //       target: 'http://localhost:8088',
+        //       changeOrigin:true, //是否跨域
+        //       pathRewrite:{
+        //           '^/api':'/'
+        //       }
+        //  },
     },
 
     // Various Dev Server settings

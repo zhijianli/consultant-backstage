@@ -11,7 +11,9 @@ const urlPrefix = 'http://localhost:8089/'
 export default new Vuex.Store({
   state:{
     count:0,
-    consultantList: []
+    consultantList: [],
+    consultingFieldList: [],
+    name: ""
   },
   mutations:{
     increment:state => state.count ++,

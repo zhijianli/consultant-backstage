@@ -7,6 +7,9 @@ import notFound from '../page/404.vue'
 import menutab from '../page/menu1/menuTab.vue'
 import menutable from '../page/menu2/menuTable.vue'
 import consultantList from '../page/canglong/consultantList.vue'
+import consultingFieldList from '../page/canglong/consultingFieldList.vue'
+import consultantEdit from '../page/canglong/consultantEdit.vue'
+import consultingFieldEdit from '../page/canglong/consultingFieldEdit.vue'
 
 Vue.use(Router)
 
@@ -33,25 +36,43 @@ export default new Router({
         path: '/',
         component: home,
         name: '藏龙',
-        iconCls: 'el-icon-message', //图标样式class
-        children: [{
+        iconCls: 'fa fa-id-card-o',//图标样式class
+        children: [
+        {
             path: '/consultantList',
             component: consultantList,
             name: '咨询师管理'
-        }]
+        },
+        {
+            path: '/consultingFieldList',
+            component: consultingFieldList,
+            name: '咨询领域管理'
+        },
+        // {
+        //     path: '/consultantEdit',
+        //     component: consultantEdit,
+        //     name: '咨询师编辑'
+        // },
+        {
+            path: '/consultingFieldEdit',
+            component: consultingFieldEdit,
+            name: '咨询领域编辑'
+        }
+
+        ]
     },
 
-    {
-        path: '/',
-        component: home,
-        name: '导航二',
-        iconCls: 'fa fa-id-card-o',
-        children: [{
-                path: '/menutable',
-                component: menutable,
-                name: 'Table'
-            }
-        ]
-    }
+    // {
+    //     path: '/',
+    //     component: home,
+    //     name: '导航二',
+    //     iconCls: 'el-icon-message',
+    //     children: [{
+    //             path: '/menutable',
+    //             component: menutable,
+    //             name: 'Table'
+    //         }
+    //     ]
+    // }
   ]
 })

@@ -48,11 +48,11 @@ export default new Router({
             component: consultingFieldList,
             name: '咨询领域管理'
         },
-        // {
-        //     path: '/consultantEdit',
-        //     component: consultantEdit,
-        //     name: '咨询师编辑'
-        // },
+        {
+            path: '/consultantEdit',
+            component: consultantEdit,
+            name: '咨询师编辑'
+        },
         {
             path: '/consultingFieldEdit',
             component: consultingFieldEdit,

@@ -1,14 +1,42 @@
 <template lang="html">
   <div class="table-content" >
 
+<br><br>
+    <el-button type="primary" @click="consultingFieldAdd()">添加领域
+    <i class="el-icon-circle-plus-outline el-icon--right"></i></el-button>
+<br><br>
+
+    <el-table
+        :data="consultingFieldList"
+        style="width: 100%">
+        <el-table-column
+          label="咨询领域"
+          width="420">
+          <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="咨询领域详情"
+          width="420">
+          <template slot-scope="scope">
+            <span style="margin-left: 10px">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
 
-<br>
-    <el-table :data="consultingFieldList" style="width: 100%">
-      <el-table-column prop="name" label="咨询领域"></el-table-column>
-      <el-table-column prop="" label="咨询领域详情"></el-table-column>
-      <el-table-column prop="" label="操作"></el-table-column>
-    </el-table>
 
 <div class="block" style="float:right;margin-top:20px;">
     <el-pagination
@@ -58,7 +86,23 @@ export default {
         },
         handleCurrentChange(val) {
          console.log(`当前页: ${val}`);
-      }
+        },
+        handleEdit(index,row){
+          this.$router.push({
+             path:'consultingFieldEdit',
+             query:{
+                index:index
+             }
+          })
+        },
+        consultingFieldAdd(){
+          this.$router.push({
+               path:'consultingFieldEdit',
+               query:{
+
+               }
+          })
+        }
 
     },
     computed:{

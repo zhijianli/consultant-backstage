@@ -162,7 +162,6 @@ export default {
          })
        },
        consultantAdd(){
-         console.log("========");
          this.$router.push({
               path:'consultantEdit',
               query:{

@@ -4,7 +4,7 @@
     咨询师名字：
     <el-input
       placeholder="请输入咨询师名字"
-      v-model="input21" style="width: 30%">
+      v-model="consultantName" style="width: 30%">
     </el-input>
 
     <br><br>
@@ -96,8 +96,11 @@
 
 <br>
 <br>
-    <el-button type="primary">添加<i class="el-icon-circle-plus-outline el-icon--right"></i></el-button>
-    <el-button type="primary" icon="el-icon-edit el-icon--right">编辑</el-button>
+    <el-button type="primary" @click="insertOrUpdateConsultant" >
+          {{this.operation}}
+      <!--<i class="el-icon-circle-plus-outline el-icon&#45;&#45;right"></i>-->
+    </el-button>
+
 
 <br>
 
@@ -112,6 +115,10 @@ export default {
     data() {
         return {
           textarea: '',
+          id:null,
+          consultantName:'',
+          consultant:null,
+          operation:null,
           options: [
                   {
                     value: '0',
@@ -131,10 +138,54 @@ export default {
                   }],
                   value: '全部'
          }
+
     },
+    beforeMount() {
+      var params = new URLSearchParams();
+      this.id = this.$route.query.id;
+      this.operation = this.$route.query.operation;
+      if(this.id>0){
+        params.append('id', this.$route.query.id);
+        return this.$axios.post("/api/consultant/getConsultantById",params).then((response) => {
+          if (response.status === 200) {
 
+            this.consultantName = response.data.consultant.name;
+
+          } else {
+            return {msg: "抱歉，服务器错误"}
+          }
+        }).catch((error) => {
+          return Promise.reject({msg: error.message})
+        })
+      }
+
+    },
     methods:{
+      insertOrUpdateConsultant(val) {
+        var params = new URLSearchParams();
+        if(this.id>0){
+          params.append('id', this.$route.query.id);
+        }
+        params.append('name', this.consultantName);
 
+        // params.append('pageIndex', this.currentPage);
+        // params.append('pageSize', this.pageSize);
+        return this.$axios.post("/api/consultant/insertOrUpdateConsultant",params).then((response) => {
+          if (response.status === 200) {
+            this.$router.push({
+              path:'consultantList',
+              query:{
+
+              }
+            })
+          } else {
+            return {msg: "抱歉，服务器错误"}
+          }
+        }).catch((error) => {
+          return Promise.reject({msg: error.message})
+        })
+
+      }
     },
     components: {
 

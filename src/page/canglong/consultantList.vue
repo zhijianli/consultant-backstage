@@ -4,12 +4,12 @@
     <el-input
       placeholder="请输入咨询师名字"
       prefix-icon="el-icon-search"
-      v-model="input21" style="width: 20%">
+      v-model="searchName" style="width: 20%">
     </el-input>
     <el-input
       placeholder="请输入价格"
       prefix-icon="el-icon-search"
-      v-model="input22" style="width: 20%">
+      v-model="searchPrice" style="width: 20%">
     </el-input>
     <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
 
@@ -77,7 +77,7 @@
          <template slot-scope="scope">
            <el-button
              size="mini"
-             @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+             @click="handleEdit(scope.$index, scope.row,scope.row.id)">编辑</el-button>
            <el-button
              size="mini"
              type="danger"
@@ -92,12 +92,24 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :page-sizes="[2, 5, 10, 20]"
+      :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
+      :total="totalNum">
     </el-pagination>
   </div>
+
+    <!--<div class="block" style="float:right;margin-top:20px;">-->
+      <!--<el-pagination-->
+        <!--@size-change="handleSizeChange"-->
+        <!--@current-change="handleCurrentChange"-->
+        <!--:current-page="currentPage"-->
+        <!--:page-sizes="[100, 200, 300, 400]"-->
+        <!--:page-size="100"-->
+        <!--layout="total, sizes, prev, pager, next, jumper"-->
+        <!--:total="400">-->
+      <!--</el-pagination>-->
+    <!--</div>-->
 
   </div>
 
@@ -128,7 +140,11 @@ export default {
             // }]
              // tableData:this.$store.state.consultantList,
              total:'0',
-             currentPage: 4
+             currentPage: 1,
+             totalNum:1,
+             pageSize:10,
+             searchName:"",
+             searchPrice:""
         }
     },
     beforeMount() {
@@ -136,10 +152,17 @@ export default {
     },
     methods:{
         search(){
-          return this.$axios.post("/api/consultant/getAllMessageByCondition").then((response) => {
+          var params = new URLSearchParams();
+          params.append('name', this.searchName);
+          params.append('price', this.searchPrice);
+          params.append('pageIndex', this.currentPage);
+          params.append('pageSize', this.pageSize);
+          return this.$axios.post("/api/consultant/getAllMessageByCondition",params).then((response) => {
             if (response.status === 200) {
               this.$store.state.consultantList = response.data.consultantList;
               this.$store.state.name = response.data.consultantList[0].name;
+              this.totalNum = response.data.consultantCount;
+              console.log("____________________"+this.totalNum);
             } else {
               return {msg: "抱歉，服务器错误"}
             }
@@ -149,15 +172,21 @@ export default {
         },
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
+          this.pageSize = val;
+          this.search();
         },
         handleCurrentChange(val) {
-         console.log(`当前页: ${val}`);
+         console.log(`当前页=========: ${val}`);
+         this.currentPage =  val;
+         this.search();
        },
-       handleEdit(index,row){
+       handleEdit(index,row,id){
          this.$router.push({
               path:'consultantEdit',
               query:{
-                 index:index
+                 operation:"编辑",
+                 index:index,
+                 id:id
               }
          })
        },
@@ -165,7 +194,7 @@ export default {
          this.$router.push({
               path:'consultantEdit',
               query:{
-
+                operation:"添加"
               }
          })
        }

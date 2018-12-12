@@ -148,9 +148,7 @@ export default {
         params.append('id', this.$route.query.id);
         return this.$axios.post("/api/consultant/getConsultantById",params).then((response) => {
           if (response.status === 200) {
-
             this.consultantName = response.data.consultant.name;
-
           } else {
             return {msg: "抱歉，服务器错误"}
           }

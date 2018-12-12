@@ -81,7 +81,7 @@
            <el-button
              size="mini"
              type="danger"
-             @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+             @click="handleDelete(scope.$index, scope.row,scope.row.id)">删除</el-button>
          </template>
        </el-table-column>
      </el-table>
@@ -92,7 +92,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[2, 5, 10, 20]"
+      :page-sizes="[5, 10, 20, 50]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="totalNum">
@@ -119,6 +119,7 @@
 <script>
 
 export default {
+    inject:['reload'],
     data() {
         return {
             // tableData: [{
@@ -172,13 +173,13 @@ export default {
         },
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
-          this.pageSize = val;
-          this.search();
+            this.pageSize = val;
+            this.search();
         },
         handleCurrentChange(val) {
-         console.log(`当前页=========: ${val}`);
-         this.currentPage =  val;
-         this.search();
+            console.log(`当前页=========: ${val}`);
+            this.currentPage =  val;
+            this.search();
        },
        handleEdit(index,row,id){
          this.$router.push({
@@ -190,6 +191,19 @@ export default {
               }
          })
        },
+      handleDelete(index,row,id){
+        var params = new URLSearchParams();
+        params.append('id', id);
+        return this.$axios.post("/api/consultant/deleteConsultant",params).then((response) => {
+          if (response.status === 200) {
+            this.reload()
+          } else {
+            return {msg: "抱歉，服务器错误"}
+          }
+        }).catch((error) => {
+          return Promise.reject({msg: error.message})
+        })
+      },
        consultantAdd(){
          this.$router.push({
               path:'consultantEdit',

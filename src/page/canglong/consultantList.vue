@@ -158,7 +158,7 @@ export default {
           params.append('price', this.searchPrice);
           params.append('pageIndex', this.currentPage);
           params.append('pageSize', this.pageSize);
-          return this.$axios.post("/api/consultant/getAllMessageByCondition",params).then((response) => {
+          return this.$axios.post("/api/consultantCenter/consultant/getAllMessageByCondition",params).then((response) => {
             if (response.status === 200) {
               this.$store.state.consultantList = response.data.consultantList;
               this.$store.state.name = response.data.consultantList[0].name;
@@ -194,7 +194,7 @@ export default {
       handleDelete(index,row,id){
         var params = new URLSearchParams();
         params.append('id', id);
-        return this.$axios.post("/api/consultant/deleteConsultant",params).then((response) => {
+        return this.$axios.post("/api/consultantCenter/consultant/deleteConsultant",params).then((response) => {
           if (response.status === 200) {
             this.reload()
           } else {

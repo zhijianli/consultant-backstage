@@ -76,7 +76,7 @@ export default {
           var params = new URLSearchParams();
           params.append('pageIndex', this.currentPage);
           params.append('pageSize', this.pageSize);
-          return this.$axios.post("/api/consultingField/getAllMessageByCondition",params).then((response) => {
+          return this.$axios.post("/api/consultantCenter/consultingField/getAllMessageByCondition",params).then((response) => {
             if (response.status === 200) {
               this.$store.state.consultingFieldList = response.data.consultingFieldList;
               this.totalNum = response.data.consultingFieldCount;
@@ -110,7 +110,7 @@ export default {
         handleDelete(index,row,id){
           var params = new URLSearchParams();
           params.append('id', id);
-          return this.$axios.post("/api/consultingField/deleteConsultingField",params).then((response) => {
+          return this.$axios.post("/api/consultantCenter/consultingField/deleteConsultingField",params).then((response) => {
             if (response.status === 200) {
               this.reload()
             } else {

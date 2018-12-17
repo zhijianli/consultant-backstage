@@ -1,22 +1,25 @@
 <template lang="html">
   <div class="table-content" >
     <br><br>
-    咨询师名字：
+    <span style="color: red;margin-right: 10px">*</span>咨询师名字：
     <el-input
       placeholder="请输入咨询师名字"
       v-model="consultantName" style="width: 30%">
     </el-input>
 
-    <br><br>
+    <br><br><br><br>
 
-<el-upload class="upload-demo" action="" ref="upload" :auto-upload='false' :on-change='changeUpload' accept="image/jpeg,image/gif,image/png,image/bmp">
-<div size="small" class="upload_btn">
-<div style="height:40px"></div>
-<i class="iconfont icon-jiahao"></i>
-<!-- <p style="line-height:0">点击上传</p> -->
-<el-button type="primary">上传头像<i class="el-icon-upload el-icon--right"></i></el-button>
-</div>
-</el-upload>
+
+    <div style="display:flex">
+      <label><span style="color: red;margin-right: 10px">*</span>上传咨询师头像：</label>
+
+      <div>
+        <alioss   :defaultimg="relatePicSrc"></alioss>
+        <p>请上传宽高比例为16:9的图片</p>
+      </div>
+    </div>
+
+
 <br>
 <br>
 地区：
@@ -111,6 +114,7 @@
 
 <script>
  import { quillEditor } from 'vue-quill-editor' //调用编辑器
+ import alioss from "../../alioss.vue"
 export default {
     data() {
         return {
@@ -146,7 +150,7 @@ export default {
       this.operation = this.$route.query.operation;
       if(this.id>0){
         params.append('id', this.$route.query.id);
-        return this.$axios.post("/api/consultant/getConsultantById",params).then((response) => {
+        return this.$axios.post("/api/consultantCenter/consultant/getConsultantById",params).then((response) => {
           if (response.status === 200) {
             this.consultantName = response.data.consultant.name;
           } else {
@@ -168,7 +172,7 @@ export default {
 
         // params.append('pageIndex', this.currentPage);
         // params.append('pageSize', this.pageSize);
-        return this.$axios.post("/api/consultant/insertOrUpdateConsultant",params).then((response) => {
+        return this.$axios.post("/api/consultantCenter/consultant/insertOrUpdateConsultant",params).then((response) => {
           if (response.status === 200) {
             this.$router.push({
               path:'consultantList',
@@ -186,7 +190,7 @@ export default {
       }
     },
     components: {
-
+      alioss
     },
     computed:{
 

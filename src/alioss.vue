@@ -3,6 +3,7 @@
     <div class="oss_file">
       <input type="file" :id="id" @change="doUpload" />
       <!--<el-upload class="upload-demo" type="file" :id="id" :on-change='doUpload'>上传图片<i class="el-icon-upload el-icon&#45;&#45;right"></i></el-upload>-->
+      <br><br>
       <img :src="url" alt="">
 
       <!--<el-upload class="upload-demo" :id="id" action="" ref="upload" :auto-upload='false' :on-change='doUpload' accept="image/jpeg,image/gif,image/png,image/bmp">-->

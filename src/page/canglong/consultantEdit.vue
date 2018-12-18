@@ -14,7 +14,7 @@
       <label><span style="color: red;margin-right: 10px">*</span>上传咨询师头像：</label>
 
       <div>
-        <alioss   :defaultimg="relatePicSrc"></alioss>
+        <alioss  @changeHeadPortraitUrl="changeHeadPortraitUrl"  :defaultimg="headPortraitUrl"></alioss>
         <p>请上传宽高比例为16:9的图片</p>
       </div>
     </div>
@@ -116,6 +116,7 @@
  import { quillEditor } from 'vue-quill-editor' //调用编辑器
  import alioss from "../../alioss.vue"
 export default {
+
     data() {
         return {
           textarea: '',
@@ -123,6 +124,7 @@ export default {
           consultantName:'',
           consultant:null,
           operation:null,
+          headPortraitUrl: "",
           options: [
                   {
                     value: '0',
@@ -153,6 +155,7 @@ export default {
         return this.$axios.post("/api/consultantCenter/consultant/getConsultantById",params).then((response) => {
           if (response.status === 200) {
             this.consultantName = response.data.consultant.name;
+            this.headPortraitUrl = response.data.consultant.headPortraitUrl;
           } else {
             return {msg: "抱歉，服务器错误"}
           }
@@ -163,12 +166,18 @@ export default {
 
     },
     methods:{
+      changeHeadPortraitUrl(data) {
+        this.headPortraitUrl = data.headPortraitUrl;
+        console.log(this.headPortraitUrl+"!!!!!!!!!!!!!!!")
+      },
       insertOrUpdateConsultant(val) {
         var params = new URLSearchParams();
         if(this.id>0){
           params.append('id', this.$route.query.id);
         }
         params.append('name', this.consultantName);
+        params.append('headPortraitUrl', this.headPortraitUrl);
+
 
         // params.append('pageIndex', this.currentPage);
         // params.append('pageSize', this.pageSize);

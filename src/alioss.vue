@@ -4,7 +4,7 @@
       <input type="file" :id="id" @change="doUpload" />
       <!--<el-upload class="upload-demo" type="file" :id="id" :on-change='doUpload'>上传图片<i class="el-icon-upload el-icon&#45;&#45;right"></i></el-upload>-->
       <br><br>
-      <img :src="url" alt="">
+      <img :src="aliOssUrl+defaultimg" alt="">
 
       <!--<el-upload class="upload-demo" :id="id" action="" ref="upload" :auto-upload='false' :on-change='doUpload' accept="image/jpeg,image/gif,image/png,image/bmp">-->
         <!--<div size="small" class="upload_btn">-->
@@ -48,6 +48,7 @@
     },
     methods:{
     async  doUpload () {
+
         console.log("开始调用了++++++++++++++++++++++");
         const _this = this;
         const urls = [];
@@ -96,8 +97,12 @@
 
                   // _this.$store.dispatch("changeUrl", _this.url);
                   _this.url = url;
-                  console.log(_this.url+"^^^^^^^^^^^^^^^^^^^^^^^^");
+                  console.log(_this.url+"^^^^^^^^^^^^^^^^^^^^^^^^"+ results.name);
                   // _this.$dispatch('changeRelatePicSrc', results.name);
+                  let data = {
+                    headPortraitUrl: results.name
+                  };
+                  this.$emit('changeHeadPortraitUrl',data);
                 }).catch((err) => {
                   console.log("========================"+err+"===========================")
                 })
@@ -114,35 +119,17 @@
 
         },
 
-  // 随机生成文件名
-  random_string(len)
-  { 　　len = len || 32; 　　
-   var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; 　　
-   var maxPos = chars.length; 　　
-   var pwd = ''; 　　
-   for (let i = 0; i < len; i++) { 　　
-     pwd += chars.charAt(Math.floor(Math.random() * maxPos));
-   }
-   return pwd;
-  }
+    // 随机生成文件名
+    random_string(len) { 　　len = len || 32; 　　
+     var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'; 　　
+     var maxPos = chars.length; 　　
+     var pwd = ''; 　　
+     for (let i = 0; i < len; i++) { 　　
+       pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+     }
+     return pwd;
+    }
   },
-  // watch:{
-  // url(val){
-  //   if(val){ this.urls.push(val);
-  //    }
-  //   }
-  //  }
-  ready() {
-      var self = this
-      if (this.defaultimg) {
-          self.url = `${self.aliOssUrl}${self.defaultimg}`
-          console.log(self.url+"++++++++++++++++++");
-      }
-      this.$watch('defaultimg', function(newVal, oldVal) {
-          self.url = `${self.aliOssUrl}${self.defaultimg}`
-          console.log(self.url+"------------------");
-      })
-  }
   }
 
 

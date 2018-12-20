@@ -51,12 +51,14 @@ export default new Router({
         {
             path: '/consultantEdit',
             component: consultantEdit,
-            name: '咨询师编辑'
+            name: '咨询师编辑',
+            hidden: true
         },
         {
             path: '/consultingFieldEdit',
             component: consultingFieldEdit,
-            name: '咨询领域编辑'
+            name: '咨询领域编辑',
+            hidden: true
         }
 
         ]

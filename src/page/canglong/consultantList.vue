@@ -42,7 +42,7 @@
          label="地区"
          width="180">
          <template slot-scope="scope">
-           <span style="margin-left: 10px">{{ scope.row.province }}</span>
+           <span style="margin-left: 10px">{{ scope.row.province }} - {{ scope.row.city }}</span>
          </template>
        </el-table-column>
        <el-table-column
@@ -63,7 +63,7 @@
          label="咨询方式"
          width="180">
          <template slot-scope="scope">
-           <span style="margin-left: 10px">{{ scope.row.province }}</span>
+           <span style="margin-left: 10px">{{ scope.row.consultationMethod }}</span>
          </template>
        </el-table-column>
        <el-table-column
@@ -158,8 +158,9 @@ export default {
           params.append('price', this.searchPrice);
           params.append('pageIndex', this.currentPage);
           params.append('pageSize', this.pageSize);
-          return this.$axios.post("/api/consultantCenter/consultant/getAllMessageByCondition",params).then((response) => {
-            if (response.status === 200) {
+          // return this.$axios.post("/api/consultantCenter/consultant/getAllMessageByCondition",params).then((response) => {
+            return this.$axios.post("/api/consultant/getAllMessageByCondition",params).then((response) => {
+                if (response.status === 200) {
               this.$store.state.consultantList = response.data.consultantList;
               this.$store.state.name = response.data.consultantList[0].name;
               this.totalNum = response.data.consultantCount;

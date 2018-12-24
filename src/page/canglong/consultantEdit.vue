@@ -60,23 +60,53 @@
     </div>
 
     <br><br><br><br>
-    领域：
-    <el-select v-model="value" placeholder="请选择">
+
+
+    <div class="linkage">
+      领域：
+      <el-select
+        v-model="consultingField"
+        @change="chooseConsultingField"
+        placeholder="请选择">
         <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
+          v-for="item in consultingFieldOptions"
+          :key="item.id"
+          :label="item.value"
+          :value="item.id">
         </el-option>
       </el-select>
-      <el-select v-model="value" placeholder="请选择">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
+      <el-select
+        v-model="consultingFieldDetail"
+        @change="chooseConsultingFieldDetail"
+        placeholder="请选择">
+        <el-option
+          v-for="item in consultingFieldDetailOptions"
+          :key="item.id"
+          :label="item.value"
+          :value="item.id">
+        </el-option>
+      </el-select>
+    </div>
+
+
+
+
+    <!--<el-select v-model="value" placeholder="请选择">-->
+        <!--<el-option-->
+          <!--v-for="item in options"-->
+          <!--:key="item.value"-->
+          <!--:label="item.label"-->
+          <!--:value="item.value">-->
+        <!--</el-option>-->
+      <!--</el-select>-->
+      <!--<el-select v-model="value" placeholder="请选择">-->
+          <!--<el-option-->
+            <!--v-for="item in options"-->
+            <!--:key="item.value"-->
+            <!--:label="item.label"-->
+            <!--:value="item.value">-->
+          <!--</el-option>-->
+        <!--</el-select>-->
         <br><br><br><br>
         咨询方式：
         <el-select v-model="consultationMethodValue" placeholder="咨询方式">
@@ -150,6 +180,8 @@ export default {
           block:'',
           textarea: '',
 
+          provinceName: '',
+          cityName: '',
           id:null,
           consultantName:'',
           consultant:null,
@@ -157,6 +189,11 @@ export default {
           headPortraitUrl: "",
           telephone: "",
           experienceOfTraining: "",
+          consultingFieldOptions: '',
+          consultingField: '',
+          consultingFieldDetailOptionsTemp: '',
+          consultingFieldDetailOptions: [],
+          consultingFieldDetail: '',
           consultationMethodOptions: [
             {
               value: '1',
@@ -243,7 +280,8 @@ export default {
 
     },
     created:function(){
-      this.getCityData()
+       this.getCityData();
+       this.getConsultantFieldAndDetail();
     },
     beforeMount() {
       var params = new URLSearchParams();
@@ -266,9 +304,11 @@ export default {
             }
             if(response.data.consultant.province){
               this.sheng = response.data.consultant.province+"";
+              this.provinceName = response.data.consultant.province+"";
             }
             if(response.data.consultant.city){
               this.shi = response.data.consultant.city+"";
+              this.cityName = response.data.consultant.city+"";
             }
 
           } else {
@@ -277,6 +317,7 @@ export default {
         }).catch((error) => {
           return Promise.reject({msg: error.message})
         })
+
       }
 
     },
@@ -298,9 +339,8 @@ export default {
         params.append('experienceOfTraining', this.experienceOfTraining);
         params.append('consultationMethod', this.consultationMethodValue);
         params.append('price', this.priceValue);
-        params.append('province', this.sheng);
-        params.append('city', this.shi);
-
+        params.append('province', this.provinceName);
+        params.append('city', this.cityName);
         // params.append('pageIndex', this.currentPage);
         // params.append('pageSize', this.pageSize);
         // return this.$axios.post("/api/consultantCenter/consultant/insertOrUpdateConsultant",params).then((response) => {
@@ -319,6 +359,72 @@ export default {
           return Promise.reject({msg: error.message})
         })
 
+      },
+
+      // 加载咨询领域数据
+      getConsultantFieldAndDetail:function(){
+        var that = this;
+        this.$axios.post("/api/consultingField/getConsultantFieldAndDetail").then((response) => {
+          if (response.status === 200) {
+            var data = response.data
+            that.consultingFieldOptions = []
+            that.consultingFieldDetailOptionsTemp = []
+
+            var consultingFieldList = data.consultingFieldList
+
+            // 领域组合
+            for(var i = 0;i<consultingFieldList.length;i++){
+              var consultingField = consultingFieldList[i];
+              that.consultingFieldOptions.push({id: consultingField.id, value: consultingField.name, children: []})
+              var consultingFieldDetailList = consultingField.consultingFieldDetailList;
+              for(var j = 0;j<consultingFieldDetailList.length;j++){
+                var consultingFieldDetail = consultingFieldDetailList[j];
+                that.consultingFieldDetailOptionsTemp.push({
+                    id: consultingFieldDetail.id,
+                    value: consultingFieldDetail.name,
+                    children: [],
+                    consultingFieldId: consultingFieldDetail.consultingFieldId
+                })
+
+              }
+            }
+
+            // 分拆领域
+            for (var i in that.consultingFieldOptions) {
+                for (var j in that.consultingFieldDetailOptionsTemp) {
+
+                  if (that.consultingFieldOptions[i].id == that.consultingFieldDetailOptionsTemp[j].consultingFieldId) {
+                    that.consultingFieldOptions[i].children.push(that.consultingFieldDetailOptionsTemp[j])
+                    var length = that.consultingFieldOptions[i].children.length;
+                    console.log("======="+length+"========"+that.consultingFieldOptions[i].children[length-1].value);
+                  }
+                }
+            }
+
+          } else{
+            console.log(response.status)
+          }
+        }).catch(function(error){console.log(typeof+ error)})
+      },
+      // 选领域
+      chooseConsultingField:function(e) {
+        for (var i in this.consultingFieldOptions) {
+          if (e === this.consultingFieldOptions[i].id) {
+            this.consultingFieldDetailOptions = this.consultingFieldOptions[i].children
+            this.consultingFieldDetail = this.consultingFieldOptions[i].children[0].value
+            // this.provinceName = this.province[index2].value
+            // this.cityName = this.province[index2].children[0].value
+          }
+        }
+      },
+      // 选领域详情
+      chooseConsultingFieldDetail:function(e) {
+        for (var i in this.consultingFieldDetailOptions) {
+          if (e === this.consultingFieldDetailOptions[i].id) {
+
+            // this.cityName = this.city[index3].value
+          }
+        }
       },
 
       // 加载china地点数据，三级
@@ -371,6 +477,8 @@ export default {
             this.qu1 =this.province[index2].children[0].children
             this.qu = this.province[index2].children[0].children[0].value
             this.E = this.qu1[0].id
+            this.provinceName = this.province[index2].value
+            this.cityName = this.province[index2].children[0].value
           }
         }
       },
@@ -382,6 +490,7 @@ export default {
             this.qu = this.city[index3].children[0].value
             this.E = this.qu1[0].id
             // console.log(this.E)
+            this.cityName = this.city[index3].value
           }
         }
       },

@@ -62,31 +62,50 @@
     <br><br><br><br>
 
 
-    <div class="linkage">
-      领域：
-      <el-select
-        v-model="consultingField"
-        @change="chooseConsultingField"
-        placeholder="请选择">
-        <el-option
-          v-for="item in consultingFieldOptions"
-          :key="item.id"
-          :label="item.value"
-          :value="item.id">
-        </el-option>
-      </el-select>
-      <el-select
-        v-model="consultingFieldDetail"
-        @change="chooseConsultingFieldDetail"
-        placeholder="请选择">
-        <el-option
-          v-for="item in consultingFieldDetailOptions"
-          :key="item.id"
-          :label="item.value"
-          :value="item.id">
-        </el-option>
-      </el-select>
+    <!--<div class="linkage">-->
+      <!--领域：-->
+      <!--<el-select-->
+        <!--v-model="consultingField"-->
+        <!--@change="chooseConsultingField"-->
+        <!--placeholder="请选择">-->
+        <!--<el-option-->
+          <!--v-for="item in consultingFieldOptions"-->
+          <!--:key="item.id"-->
+          <!--:label="item.value"-->
+          <!--:value="item.id">-->
+        <!--</el-option>-->
+      <!--</el-select>-->
+      <!--<el-select-->
+        <!--v-model="consultingFieldDetail"-->
+        <!--@change="chooseConsultingFieldDetail"-->
+        <!--placeholder="请选择">-->
+        <!--<el-option-->
+          <!--v-for="item in consultingFieldDetailOptions"-->
+          <!--:key="item.id"-->
+          <!--:label="item.value"-->
+          <!--:value="item.id">-->
+        <!--</el-option>-->
+      <!--</el-select>-->
+    <!--</div>-->
+
+
+    <div style="display: flex">
+        <div>领域：</div>
+        <div>
+            <!--领域-->
+            <div style="display: flex" v-for="item in consultingFieldList">
+                 <!--领域详情-->
+              <div>{{item.name}}：</div>
+              <el-checkbox-group v-model="checkFieldDetailIdList">
+                      <el-checkbox  v-for="item2 in item.consultingFieldDetailList"  :checked="item2.checked"  :label="item2.id"  >{{item2.name}}</el-checkbox>
+              </el-checkbox-group>
+              <br><br><br>
+            </div>
+        </div>
+
+
     </div>
+
 
 
 
@@ -107,7 +126,7 @@
             <!--:value="item.value">-->
           <!--</el-option>-->
         <!--</el-select>-->
-        <br><br><br><br>
+        <br><br><br>
         咨询方式：
         <el-select v-model="consultationMethodValue" placeholder="咨询方式">
             <el-option
@@ -189,8 +208,10 @@ export default {
           headPortraitUrl: "",
           telephone: "",
           experienceOfTraining: "",
+          consultingFieldList:null,
           consultingFieldOptions: '',
           consultingField: '',
+          checkFieldDetailIdList:[],
           consultingFieldDetailOptionsTemp: '',
           consultingFieldDetailOptions: [],
           consultingFieldDetail: '',
@@ -280,17 +301,17 @@ export default {
 
     },
     created:function(){
+       this.operation = this.$route.query.operation;
+       this.id = this.$route.query.id;
        this.getCityData();
        this.getConsultantFieldAndDetail();
     },
     beforeMount() {
       var params = new URLSearchParams();
-      this.id = this.$route.query.id;
-      this.operation = this.$route.query.operation;
       if(this.id>0){
-        params.append('id', this.$route.query.id);
-        // return this.$axios.post("/api/consultantCenter/consultant/getConsultantById",params).then((response) => {
-        return this.$axios.post("/api/consultant/getConsultantById",params).then((response) => {
+        params.append('id', this.id);
+        return this.$axios.post("/api/consultantCenter/consultant/getConsultantById",params).then((response) => {
+        // return this.$axios.post("/api/consultant/getConsultantById",params).then((response) => {
             if (response.status === 200) {
             this.consultantName = response.data.consultant.name;
             this.headPortraitUrl = response.data.consultant.headPortraitUrl;
@@ -333,6 +354,7 @@ export default {
         if(this.id>0){
           params.append('id', this.$route.query.id);
         }
+        params.append('operation', this.operation);
         params.append('name', this.consultantName);
         params.append('headPortraitUrl', this.headPortraitUrl);
         params.append('telephone', this.telephone);
@@ -341,10 +363,12 @@ export default {
         params.append('price', this.priceValue);
         params.append('province', this.provinceName);
         params.append('city', this.cityName);
+        params.append('checkFieldDetailIdList', this.checkFieldDetailIdList);
+
         // params.append('pageIndex', this.currentPage);
         // params.append('pageSize', this.pageSize);
-        // return this.$axios.post("/api/consultantCenter/consultant/insertOrUpdateConsultant",params).then((response) => {
-        return this.$axios.post("/api/consultant/insertOrUpdateConsultant",params).then((response) => {
+        return this.$axios.post("/api/consultantCenter/consultant/insertOrUpdateConsultant",params).then((response) => {
+        // return this.$axios.post("/api/consultant/insertOrUpdateConsultant",params).then((response) => {
           if (response.status === 200) {
             this.$router.push({
               path:'consultantList',
@@ -364,42 +388,48 @@ export default {
       // 加载咨询领域数据
       getConsultantFieldAndDetail:function(){
         var that = this;
-        this.$axios.post("/api/consultingField/getConsultantFieldAndDetail").then((response) => {
+        var params = new URLSearchParams();
+        if(this.id){
+          params.append('consultantId', this.id);
+        }
+        this.$axios.post("/api/consultantCenter/consultingField/getConsultantFieldAndDetail",params).then((response) => {
           if (response.status === 200) {
-            var data = response.data
-            that.consultingFieldOptions = []
-            that.consultingFieldDetailOptionsTemp = []
+            this.consultingFieldList = response.data.consultingFieldList
 
-            var consultingFieldList = data.consultingFieldList
-
-            // 领域组合
-            for(var i = 0;i<consultingFieldList.length;i++){
-              var consultingField = consultingFieldList[i];
-              that.consultingFieldOptions.push({id: consultingField.id, value: consultingField.name, children: []})
-              var consultingFieldDetailList = consultingField.consultingFieldDetailList;
-              for(var j = 0;j<consultingFieldDetailList.length;j++){
-                var consultingFieldDetail = consultingFieldDetailList[j];
-                that.consultingFieldDetailOptionsTemp.push({
-                    id: consultingFieldDetail.id,
-                    value: consultingFieldDetail.name,
-                    children: [],
-                    consultingFieldId: consultingFieldDetail.consultingFieldId
-                })
-
-              }
-            }
-
-            // 分拆领域
-            for (var i in that.consultingFieldOptions) {
-                for (var j in that.consultingFieldDetailOptionsTemp) {
-
-                  if (that.consultingFieldOptions[i].id == that.consultingFieldDetailOptionsTemp[j].consultingFieldId) {
-                    that.consultingFieldOptions[i].children.push(that.consultingFieldDetailOptionsTemp[j])
-                    var length = that.consultingFieldOptions[i].children.length;
-                    console.log("======="+length+"========"+that.consultingFieldOptions[i].children[length-1].value);
-                  }
-                }
-            }
+            // var data = response.data
+            // that.consultingFieldOptions = []
+            // that.consultingFieldDetailOptionsTemp = []
+            //
+            // var consultingFieldList = data.consultingFieldList
+            //
+            // // 领域组合
+            // for(var i = 0;i<consultingFieldList.length;i++){
+            //   var consultingField = consultingFieldList[i];
+            //   that.consultingFieldOptions.push({id: consultingField.id, value: consultingField.name, children: []})
+            //   var consultingFieldDetailList = consultingField.consultingFieldDetailList;
+            //   for(var j = 0;j<consultingFieldDetailList.length;j++){
+            //     var consultingFieldDetail = consultingFieldDetailList[j];
+            //     that.consultingFieldDetailOptionsTemp.push({
+            //         id: consultingFieldDetail.id,
+            //         value: consultingFieldDetail.name,
+            //         children: [],
+            //         consultingFieldId: consultingFieldDetail.consultingFieldId
+            //     })
+            //
+            //   }
+            // }
+            //
+            // // 分拆领域
+            // for (var i in that.consultingFieldOptions) {
+            //     for (var j in that.consultingFieldDetailOptionsTemp) {
+            //
+            //       if (that.consultingFieldOptions[i].id == that.consultingFieldDetailOptionsTemp[j].consultingFieldId) {
+            //         that.consultingFieldOptions[i].children.push(that.consultingFieldDetailOptionsTemp[j])
+            //         var length = that.consultingFieldOptions[i].children.length;
+            //         console.log("======="+length+"========"+that.consultingFieldOptions[i].children[length-1].value);
+            //       }
+            //     }
+            // }
 
           } else{
             console.log(response.status)

@@ -53,8 +53,8 @@ export default {
       this.operation = this.$route.query.operation;
       if(this.id>0){
         params.append('id', this.$route.query.id);
-        // return this.$axios.post("/api/consultantCenter/consultingField/getConsultantFieldById",params).then((response) => {
-          return this.$axios.post("/api/consultingField/getConsultantFieldById",params).then((response) => {
+        return this.$axios.post("/api/consultantCenter/consultingField/getConsultantFieldById",params).then((response) => {
+        //   return this.$axios.post("/api/consultingField/getConsultantFieldById",params).then((response) => {
             if (response.status === 200) {
             this.consultantFieldName = response.data.consultantField.name;
             this.consultingFieldDetailStr = response.data.consultantField.consultingFieldDetailStr;
@@ -76,8 +76,8 @@ export default {
 
          params.append('name', this.consultantFieldName);
          params.append('consultingFieldDetailStr', this.consultingFieldDetailStr);
-         // return this.$axios.post("/api/consultantCenter/consultingField/insertOrUpdateConsultantField",params).then((response) => {
-           return this.$axios.post("/api/consultingField/insertOrUpdateConsultantField",params).then((response) => {
+         return this.$axios.post("/api/consultantCenter/consultingField/insertOrUpdateConsultantField",params).then((response) => {
+         //   return this.$axios.post("/api/consultingField/insertOrUpdateConsultantField",params).then((response) => {
              if (response.status === 200) {
              this.$router.push({
                path:'consultingFieldList',

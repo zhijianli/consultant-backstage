@@ -39,6 +39,13 @@
          </template>
        </el-table-column>
        <el-table-column
+         label="手机号"
+         width="180">
+         <template slot-scope="scope">
+           <span style="margin-left: 10px">{{ scope.row.telephone }}</span>
+         </template>
+       </el-table-column>
+       <el-table-column
          label="地区"
          width="180">
          <template slot-scope="scope">
@@ -46,14 +53,13 @@
          </template>
        </el-table-column>
        <el-table-column
-         label="咨询领域"
+         label="受训经历"
          width="180">
          <template slot-scope="scope">
            <el-popover trigger="hover" placement="top">
-             <p>姓名: {{ scope.row.name }}</p>
-             <p>地区: {{ scope.row.province }}</p>
+             <p>{{ scope.row.experienceOfTraining }}</p>
              <div slot="reference" class="name-wrapper">
-               <el-tag size="medium">{{ scope.row.province }}</el-tag>
+               <el-tag size="medium">{{ scope.row.experienceOfTrainingAbb }}...</el-tag>
              </div>
            </el-popover>
          </template>
@@ -63,7 +69,7 @@
          label="咨询方式"
          width="180">
          <template slot-scope="scope">
-           <span style="margin-left: 10px">{{ scope.row.consultationMethod }}</span>
+           <span style="margin-left: 10px">{{ scope.row.consultationMethodStr }}</span>
          </template>
        </el-table-column>
        <el-table-column
@@ -158,8 +164,8 @@ export default {
           params.append('price', this.searchPrice);
           params.append('pageIndex', this.currentPage);
           params.append('pageSize', this.pageSize);
-          // return this.$axios.post("/api/consultantCenter/consultant/getAllMessageByCondition",params).then((response) => {
-            return this.$axios.post("/api/consultant/getAllMessageByCondition",params).then((response) => {
+          return this.$axios.post("/api/consultantCenter/consultant/getAllMessageByCondition",params).then((response) => {
+          //   return this.$axios.post("/api/consultant/getAllMessageByCondition",params).then((response) => {
                 if (response.status === 200) {
               this.$store.state.consultantList = response.data.consultantList;
               this.$store.state.name = response.data.consultantList[0].name;
@@ -196,6 +202,7 @@ export default {
         var params = new URLSearchParams();
         params.append('id', id);
         return this.$axios.post("/api/consultantCenter/consultant/deleteConsultant",params).then((response) => {
+        // return this.$axios.post("/api/consultant/deleteConsultant",params).then((response) => {
           if (response.status === 200) {
             this.reload()
           } else {

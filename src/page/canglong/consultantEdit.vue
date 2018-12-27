@@ -15,7 +15,7 @@
 
       <div>
         <alioss  @changeHeadPortraitUrl="changeHeadPortraitUrl"  :defaultimg="headPortraitUrl"></alioss>
-        <p>请上传宽高比例为16:9的图片</p>
+        <p>请上传宽高比例为1:1的图片</p>
       </div>
     </div>
 

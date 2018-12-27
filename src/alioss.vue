@@ -147,7 +147,7 @@
 .oss_file img{
 
   height: 90px;
-  width:160px;
+  width:90px;
    /* margin-top: -20px; */
    /* width:100%; */
    display: inline-block;
